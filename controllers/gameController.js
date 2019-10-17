@@ -32,10 +32,6 @@ exports.findGame = function(req, res){
 
 //add user to game
 exports.addUser = function(req, res, next){
-    const newUser = new user = {
-        _id:  1,
-        name: 'Ben'
-    }
 
     game.addUser(newUser, (err, updatedGame) => {
         if(err) throw err;

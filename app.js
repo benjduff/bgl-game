@@ -3,9 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const config = require('./config/database');
-const game = require('./routes/game');
-const users = require('./routes/users');
-const bcrypt = require('bcryptjs');
+const gameRoute = require('./routes/game');
+const userRoute = require('./routes/user');
 
 //connect to db
 mongoose.connect(config.database);
@@ -38,8 +37,8 @@ app.get('/', (req, res) => {
 });
 
 //Routes
-app.use(game);
-//app.use(users);
+app.use(gameRoute);
+app.use(userRoute);
 
 
 
