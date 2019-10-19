@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const config = require('../config/database');
-const game = require('./game');
 const bcrypt = require('bcryptjs');
 
 const UserSchema = mongoose.Schema({
@@ -36,6 +34,11 @@ module.exports.addNewUser = function(newUser, callback){
         });
     });
 } 
+
+//authenticate user for login
+module.exports.findUserByUsername = function(username, callback){
+    User.findOne({username: username}, callback);
+}
 
 //find user by id and delete from users collection
 module.exports.deleteUserFromDb = function(userId, callback){

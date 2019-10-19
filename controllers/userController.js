@@ -1,7 +1,9 @@
 const game = require('../models/game');
-const express = require('express');
-const moment = require('moment');
+const config = require('../config/database');
 const user = require('../models/user');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
 
 //registering a new user
 exports.registerUser = function(req, res){
@@ -27,6 +29,34 @@ exports.registerUser = function(req, res){
                     res.status(201).json({msg:"User created successfully", userId: user._id});
                 }
             });
+        }
+    });
+}
+
+//Authenticate user
+exports.authenticate = function(req, res, next){
+    // find user by their username 
+    user.findUserByUsername(req.body.username, (err, foundUser) => {
+        if(err) res.status(500).json({error: err});
+        //if the user is found compare password with bcrypt
+        if(foundUser){
+            bcrypt.compare(req.body.password, foundUser.password, (err, result) => {
+                if (err) res.status(401).json({ msg: "Authentication failed" });
+                //if password matches create a new json web token
+                if (result) {
+                    const token = jwt.sign({
+                        username: foundUser.username,
+                        userId: foundUser._id
+                    },
+                    config.JWT_KEY,
+                    {
+                        expiresIn: "1hr"
+                    });
+                    res.status(200).json({ msg: "Authentication successful", authToken: token });
+                } else {
+                    res.status(401).json({msg: "Authentication failed"});  
+                }
+            }); 
         }
     });
 }
