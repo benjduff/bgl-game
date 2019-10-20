@@ -7,6 +7,9 @@ const GameSchema = mongoose.Schema({
     },
     endTime:{
         type: Date
+    },
+    logs:{
+        type: Array
     }
 });
 
@@ -20,12 +23,17 @@ module.exports.createGame = function(newGame, callback){
 
 //find game
 module.exports.findGame = function(callback){
-    Game.findOne({});
+    Game.find({}, callback);
+}
+
+//check for userId in games leaderboard array
+module.exports.checkUserInGame = function(userId, callback){
+    Game.find({leaderboard: {$elemMatch: {userId: userId}}}, callback);
 }
 
 //add user to game
-module.exports.addUser = function(user, callback){
-    Game.findOneAndUpdate({}, {$push:{leaderboard: user}}, {new: true}, callback);
+module.exports.addUserToLeaderboard = function(user, callback){
+    Game.findOneAndUpdate({}, {$push:{leaderboard: user}}, {new: true}, callback);    
 }
 
 //remove user from game

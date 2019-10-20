@@ -30,12 +30,6 @@ app.use(cors());
 app.use(bodyParser.json());
 
 
-
-//temporary homepage route
-app.get('/', (req, res) => {
-    res.send('HOME');
-});
-
 //Routes
 app.use(gameRoute);
 app.use(userRoute);

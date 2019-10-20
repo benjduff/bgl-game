@@ -14,6 +14,9 @@ const UserSchema = mongoose.Schema({
     },
     logs:{
         type: Array
+    },
+    bglAverage:{
+        type: Number
     }
 });
 

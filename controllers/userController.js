@@ -46,7 +46,8 @@ exports.authenticate = function(req, res, next){
                 if (result) {
                     const token = jwt.sign({
                         username: foundUser.username,
-                        userId: foundUser._id
+                        userId: foundUser._id,
+                        userBglAverage: foundUser.bglAverage
                     },
                     config.JWT_KEY,
                     {
@@ -65,7 +66,12 @@ exports.authenticate = function(req, res, next){
 exports.deleteUser = function(req, res, next){
     user.deleteUserFromDb(req.params.userId, (err) => {
         if(err) throw err;
-        if(!err) res.status(200).json({msg: "User deleted"});
+        if(!err) res.redirect('/login');
     })
 }
+
+//add log to users document
+//exports.updateLogs = function(req, res, next){
+
+//}
 

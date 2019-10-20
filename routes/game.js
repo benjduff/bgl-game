@@ -1,16 +1,18 @@
 const gameController = require('../controllers/gameController');
+const auth = require('../middleware/check-auth');
 const express = require('express');
 const router = express.Router();
 
-//creategame
-router.post('/creategame', gameController.createGame);
 
-//get game
-router.get('/', gameController.findGame);
+//creategame
+router.post('/creategame', auth.checkToken, gameController.createGame);
+
+//get current game
+router.get('/', auth.checkToken, gameController.findGame);
 
 
 //add user to game
-router.post('/joingame', gameController.addUser);
+router.post('/joingame', auth.checkToken, gameController.addUser);
 
 
 //update game

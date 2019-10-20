@@ -32,14 +32,30 @@ exports.findGame = function(req, res){
 
 //add user to game
 exports.addUser = function(req, res, next){
+    const newPlayer = {
+        username: res.locals.userData.username,
+        userId: res.locals.userData.userId,
+        userLogs: [],
+        userPoints: 0,
+        userBglAverage:res.locals.userData.userBglAverage
+    }
 
-    game.addUser(newUser, (err, updatedGame) => {
+    //check if user is already in game before adding them
+    game.checkUserInGame(newPlayer.userId, (err, existingUserArr) => {
         if(err) throw err;
-        if (!game) {
-            res.json({success: false, msg:"There was a problem retrieving the game."});
+        if(existingUserArr.length >= 1){
+            res.status(409).json({msg: "User already joined this game."});
         } else {
-            res.json({success: true, game: updatedGame});
+            //user isn't in the game yet, so lets add them to the games leaderboard array
+            game.addUserToLeaderboard(newPlayer, (err, updatedGame) => {
+                if(err) throw err;
+                if (!game) {
+                    res.status(404).json({msg:"The game was not found."});
+                } else {
+                    res.status(200).json({game: updatedGame});
+                } 
+            });
         }
-    })
+    });
 }
 
