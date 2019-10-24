@@ -12,5 +12,7 @@ router.post('/login', userController.authenticate);
 //Delete a user
 router.delete('/delete/:userId', auth.checkToken, userController.deleteUser);
 
+//update logs
+router.post('/user/updatelogs', auth.checkToken, userController.addNewLog, userController.redirectToHome);
 
 module.exports = router;

@@ -47,3 +47,8 @@ module.exports.findUserByUsername = function(username, callback){
 module.exports.deleteUserFromDb = function(userId, callback){
     User.findByIdAndDelete(userId, callback);
 }
+
+//add log to users logs array
+module.exports.addLog = function(userId, newLog, callback){
+    User.findByIdAndUpdate({_id: userId}, {$push: {logs: newLog}}, {new: true}, callback);
+}

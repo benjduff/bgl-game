@@ -24,9 +24,10 @@ exports.registerUser = function(req, res){
             user.addNewUser(newUser, (err, user) => {
                 if(err){
                     res.status(500).json({error: err});
-                //  res.redirect('/signup') in future
+                //  res.redirect('/signup'); in future
                 } else {
                     res.status(201).json({msg:"User created successfully", userId: user._id});
+                    //res.redirect('/login'); 
                 }
             });
         }
@@ -71,7 +72,19 @@ exports.deleteUser = function(req, res, next){
 }
 
 //add log to users document
-//exports.updateLogs = function(req, res, next){
+exports.addNewLog = function(req, res, next){
+    user.addLog(req.body.userId, req.body.newLog, (err, updatedUser) => {
+        if(err) throw err;
+        if(updatedUser === null){
+            res.status(404).json({msg:"The user was not found"});
+        } else {
+            //res.status(200).json({msg:"User log was added successfully!"});
+            next();
+        }
+    })
+}
 
-//}
+exports.redirectToHome = function(req, res){
+    res.redirect('/');
+}
 
