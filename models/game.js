@@ -36,7 +36,24 @@ module.exports.addUserToLeaderboard = function(user, callback){
     Game.findOneAndUpdate({}, {$push:{leaderboard: user}}, {new: true}, callback);    
 }
 
-//remove user from game
+//delete user form game --DEV ONLY
+module.exports.deleteUser = function(userId, callback){
+    Game.updateOne({}, {$pull: {leaderboard: {userId: userId}}}, callback);
+}
 
+//get user logs from game
+module.exports.getLogs = function(userId, callback){
+    Game.find({logs: {$elemMatch: {userId: userId}}}.forEach(function(doc){
+        
+    }) ,callback);
+}
+
+//update leaderboard and logss
+module.exports.updateLogs = function(gameId, newLog, callback){
+    Game.findByIdAndUpdate(gameId, {$push: {logs: newLog}}, {new:true}, callback);
+}
 
 //update leaderboard and logs
+module.exports.updateLeaderboard = function(userId, totalPoints, callback){
+    Game.update({leaderboard: [{$elemMatch: {userId: userId}}]}, {$inc: {userPoints: totalPoints}}, {new: true}, callback);
+}

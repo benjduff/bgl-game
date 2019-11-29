@@ -73,6 +73,7 @@ exports.deleteUser = function(req, res, next){
 
 //add log to users document
 exports.addNewLog = function(req, res, next){
+    //const newLog = res.locals.newLog;
     user.addLog(req.body.userId, req.body.newLog, (err, updatedUser) => {
         if(err) throw err;
         if(updatedUser === null){

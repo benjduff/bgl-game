@@ -14,12 +14,12 @@ router.get('/', auth.checkToken, gameController.findGame);
 //add user to game
 router.post('/joingame', auth.checkToken, gameController.addUser);
 
-
+router.get('/logs/:userId', gameController.getLogs);
 //update game
+router.post('/', auth.checkToken, gameController.updateLogs, gameController.updateLeaderboard);
 
-
-//remove user from game
-
+//remove user from game --DEV ONLY
+router.delete('/:userId', gameController.removeUser);
 
 module.exports = router;
 

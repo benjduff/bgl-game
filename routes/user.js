@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/signup', userController.registerUser);
 
 //Login
-router.post('/login', userController.authenticate);
+router.post('/login', userController.authenticate); //redirect to home next
 
 //Delete a user
 router.delete('/delete/:userId', auth.checkToken, userController.deleteUser);
