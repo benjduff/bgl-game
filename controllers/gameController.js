@@ -1,4 +1,5 @@
 const game = require('../models/game');
+const log = require('../models/log');
 const user = require('../models/user');
 const express = require('express');
 const moment = require('moment');
@@ -74,18 +75,19 @@ exports.removeUser = function(req, res, next){
 exports.updateLogs = function(req, res, next){
     //new log obj
     const gameId = req.body.gameId;
-    const newLog = {
+    const newLog = new log({
         userId: res.locals.userData.userId,
         username: res.locals.userData.username,
         bgl: req.body.bgl,
-        datetime: moment().format('LLLL')
-    }
+        date: moment().format('LLLL')
+    });
 
     //update the game logs and if successful move on to updateLeaderboard
     game.updateLogs(gameId, newLog, (err, updatedGame) => {
         if(err){
             throw err;
         } else {
+            res.locals.currentGame = updatedGame;
             next()    
         }
     })
@@ -93,33 +95,37 @@ exports.updateLogs = function(req, res, next){
 
 //update leaderboard after user adds a new log
 exports.updateLeaderboard = function(req, res, next){
-    let totalPoints = 0;
-    game.getLogs(res.locals.userData.userId, (err, playerLogs) => {
-        if(err) throw err; 
-        console.log("GAME LOGS:" + playerLogs);
 
-        
-            
+    let totalPoints = 0;
+    //find how many logs the user has submitted
+    game.getTotalLogs(res.locals.currentGame._id, res.locals.userData.userId, (err, userLogs) => {
+        if(err) res.status(400).json({msg: "Bad Request: Use appropriate game/user id"});
+        //Add 5 points for each log the user has submitted
+        userLogs.forEach(player => {
+            if(player._id === res.locals.userData.userId){
+                totalPoints = player.logs * 5;
+            }
+        });
+        //update the users leaderboard score with their total points
         game.updateLeaderboard(res.locals.userData.userId, totalPoints, (err, updatedGame) => {
             if(err) throw err;
-            console.log("totalp: " + totalPoints);
-            
             if(updatedGame){
-                res.status(200).json({msg: "The game has been updated", game: updatedGame});
+                res.status(200).json({msg: "The game has been updated"});
+            } else {
+                res.status(404).json({msg: "The leaderboard could not be updated."});
             }
         })
     })
 }
 
-
-exports.getLogs = function(req, res, next){
-    game.getLogs(req.params.userId, (err, logs) => {
+//DEV ONLY -- For testing getTotalLogs (find how many logs a user has in the game).
+exports.getTotalLogs = function(req, res, next){
+    game.getTotalLogs(req.body.gameId, req.params.userId, (err, logs) => {
         if(err) throw err;
         if (logs) {
-            console.log(logs);
-            
-            res.json({userlogs: logs});
+            res.json({userLogs: logs});
         }
     })
 }
+
 

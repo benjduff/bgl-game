@@ -41,19 +41,20 @@ module.exports.deleteUser = function(userId, callback){
     Game.updateOne({}, {$pull: {leaderboard: {userId: userId}}}, callback);
 }
 
-//get user logs from game
-module.exports.getLogs = function(userId, callback){
-    Game.find({logs: {$elemMatch: {userId: userId}}}.forEach(function(doc){
-        
-    }) ,callback);
+//find how many logs a user has in the game
+module.exports.getTotalLogs = function(gameId, userId, callback){
+    Game.aggregate([{$unwind:"$logs"}, 
+        {$group:{_id:"$logs.userId", 
+        logs: {$sum: 1}
+    }}]).exec(callback);
 }
-
-//update leaderboard and logss
+ 
+//add a new log to the game
 module.exports.updateLogs = function(gameId, newLog, callback){
     Game.findByIdAndUpdate(gameId, {$push: {logs: newLog}}, {new:true}, callback);
 }
 
-//update leaderboard and logs
+//update users total points in game leaderboard
 module.exports.updateLeaderboard = function(userId, totalPoints, callback){
-    Game.update({leaderboard: [{$elemMatch: {userId: userId}}]}, {$inc: {userPoints: totalPoints}}, {new: true}, callback);
+    Game.update({leaderboard: {$elemMatch: {userId: userId}}}, {$set: {'leaderboard.$.userPoints': totalPoints}}, callback);
 }
