@@ -118,6 +118,7 @@ exports.updateLeaderboard = function(req, res, next){
     })
 }
 
+//get arr of users logged bgls from the game and calculate the average bgl
 exports.calcAvBgl = function(req, res, next){
     game.getUserBgls(req.params.userId, (err, userLogs) => {
         if(err) throw err;
@@ -132,7 +133,6 @@ exports.calcAvBgl = function(req, res, next){
             }
             let avg = total / bglArr.length;
             avg = Math.round(avg * 100) / 100;
-
             res.status(200).json({avgBgl: avg});
         }
     })
