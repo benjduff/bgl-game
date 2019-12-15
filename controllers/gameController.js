@@ -118,6 +118,26 @@ exports.updateLeaderboard = function(req, res, next){
     })
 }
 
+exports.calcAvBgl = function(req, res, next){
+    game.getUserBgls(req.params.userId, (err, userLogs) => {
+        if(err) throw err;
+        if(userLogs === null){
+            res.status(404).json({msg: "User does not have any logs."});
+        } else {
+            let total = 0;
+            let bglArr = userLogs[0].bgls;
+            //calculate average bgl and return 
+            for (let i = 0; i < bglArr.length; i++) {
+                total += bglArr[i];
+            }
+            let avg = total / bglArr.length;
+            avg = Math.round(avg * 100) / 100;
+
+            res.status(200).json({avgBgl: avg});
+        }
+    })
+}
+
 //DEV ONLY -- For testing getTotalLogs (find how many logs a user has in the game).
 exports.getTotalLogs = function(req, res, next){
     game.getTotalLogs(req.body.gameId, req.params.userId, (err, logs) => {
@@ -127,5 +147,6 @@ exports.getTotalLogs = function(req, res, next){
         }
     })
 }
+
 
 

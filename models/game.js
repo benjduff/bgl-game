@@ -58,3 +58,12 @@ module.exports.updateLogs = function(gameId, newLog, callback){
 module.exports.updateLeaderboard = function(userId, totalPoints, callback){
     Game.update({leaderboard: {$elemMatch: {userId: userId}}}, {$set: {'leaderboard.$.userPoints': totalPoints}}, callback);
 }
+
+//get all of a users bgl logs from game
+module.exports.getUserBgls = function(userId, callback){
+    Game.aggregate([
+        {$unwind: "$logs"},
+        {$match: {"logs.userId":userId}},
+        {$group:{_id:'$logs.userId', bgls:{$push:'$logs.bgl'}}}
+    ]).exec(callback);
+}

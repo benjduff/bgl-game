@@ -14,7 +14,7 @@ router.get('/', auth.checkToken, gameController.findGame);
 //add user to game
 router.post('/joingame', auth.checkToken, gameController.addUser);
 
-router.get('/logs/:userId', gameController.getTotalLogs);
+router.get('/logs/:userId', gameController.calcAvBgl);
 //update game
 router.post('/', auth.checkToken, gameController.updateLogs, gameController.updateLeaderboard);
 
